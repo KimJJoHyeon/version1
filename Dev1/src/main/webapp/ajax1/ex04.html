@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!--  
+	전송 버튼 클릭시 post 방식으로 info.jsp로 데이터를 넘긴후 다시 전달 받아 p id="result"요소
+	에 입력 내용을 출력해 주세요
+ -->
+
+<script type="text/javascript">
+	function operFn(){
+		//1. input 양식들의 값 가져오기
+		var name = document.getElementById("name").value;
+		var age = document.getElementById("age").value;
+		var phone = document.getElementById("phone").value;
+		var addr = document.getElementById("addr").value;
+		
+		//2. XMLHttpRequest객체 생성
+		var request = new XMLHttpRequest();
+		
+		//3. request의 상태가 바뀌면 실행 -> 예외처리 해야함
+		request.onreadystatechange = function() {
+			//request의 상태가 예외에 안걸리고 모두 성공적으로 동작했다면?
+			if(request.readyState == 4 && request.status==200){
+																//request의 응답 텍스트
+				document.getElementById("result").textContent = request.responseText;
+			}
+		}
+	//4.POST 방식으로 해당 경로를 열고
+	request.open('POST','info.jsp',false);
+	//5. request의 헤더를 post방식이므로 이렇게 설정함.
+	request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	//6. 해당 경로로 "key="+value 값으로 보낸다.
+	request.send("name="+name+"&age="+age+"&phone="+phone+"&addr="+addr);
+	}
+
+
+</script>
+</head>
+<body>
+	<h2>입력데이터 ajax와 통신하기</h2>
+	<p>
+		이름 : <input type="text" id="name">
+	</p>
+	<p>
+		나이 : <input type="text" id="age">
+	</p>
+	<p>
+		연락처 : <input type="text" id="phone">
+	</p>
+	<p>
+		주소 : <input type="text" id="addr">
+	</p>
+	
+	<button onclick="operFn()">전송</button>
+	<p id="result"></p>
+</body>
+</html>

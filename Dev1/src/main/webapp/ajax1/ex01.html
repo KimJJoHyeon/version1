@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>XMLHttpRequest</title>
+<script type="text/javascript">
+//예외처리2가지 해야함 - 1. requestState상태 
+					//2.웹 페이지의 응답 데이터(서버의 문서 상태)의 상태 처리
+	function callAjax1() {
+		//ajax통신 
+		//1단계 XMLHttpRequest객체 생성
+		var request  = new XMLHttpRequest();
+		//예외처리 1,2 - send이전에 해야함(requestState상태 )
+		request.onreadystatechange = function() {
+			//1. request의 상태가 바뀔때마다 해라(readyState) //2.웹 문서의 상태가 온전할 경우해라(status)
+			if(request.readyState == 4 && request.status == 200){
+				//request의 상태가 4일 경우 요청한 데이터의 
+				//처리가 완려되서 응답할 준비가 완료됨.
+				
+				//4단계 객체의 documentk
+				document.getElementById("result").innerHTML = 
+					request.responseText;
+			}
+		}
+		//2단계 XMLHttpRequest - open() 메소드
+		//request.open(전송 방식, 원하는 요청 경로, 비동기 사용 여부)
+		request.open('GET','/Dev1/data/data1.txt',false);
+		
+		//3단계 XMLHttpRequest- send() 메소드
+		request.send();
+		
+
+	}
+		function callAjax2() {
+		var request = new XMLHttpRequest();
+		
+		//예외 처리 부분
+		request.onreadystatechange = function() {
+			
+			if(request.readyState == 4 && request.status == 200){
+				
+				document.getElementById("result").innerHTML =
+					request.responseText;
+			}
+			
+		}
+		request.open('get','/Dev1/data/data1.xml',false);
+		request.send();
+		}
+		
+		//Json 통신
+		function callAjax3() {
+			//1.request객체생성 
+			var request = new XMLHttpRequest();
+			
+			//2. 예외처리2가지
+			request.onreadystatechange= function() {
+				if(request.readyState==4 && request.status==200){
+					//json객체 생성	--> request의 응답텍스트를 변환함(JSON.parse)
+					var json = JSON.parse(request.responseText);
+					document.getElementById("result").innerHTML
+						=json[0].name+"/" + json[0].publisher+"/"
+						+json[0].author+"/" + json[0].price;
+				
+				}
+			}
+			//3. open()
+			request.open('GET',"/Dev1/data/data1.json",false);
+			
+			//4. send();
+			request.send();
+		}
+		//5. json 모든 결과 가져오기
+		function callAjax4(){
+			//1. request객체 생성
+			var request = new XMLHttpRequest();
+			
+			//2. 예외처리 만족시 실행
+			request.onreadystatechange = function() {
+				if(request.readState = 4 && request.status == 200){
+					//json파일 parse함
+					var json = JSON.parse(request.responseText);
+					var result = document.getElementById("result");
+					var scName = json[0].name;
+					var stInfo = '';
+					//console.log("처음"+ json[json.length-1].);
+					//json파일의 모든 정보를 뽑아옴
+					
+						for(var i = 0; i<json[0].students.length;i++){
+							var student = json[0].students[i];
+							stInfo+='학생명 : '+student.name+"/나이 : "+student.age+"<br>";
+						}
+						result.innerHTML = "["+scName+"]의 학생정보 <br>"+stInfo;
+					
+				}
+			}
+			//3.open - json 파일경로 설정
+			request.open("GET","/Dev1/data/data2.json",false);
+			
+			//4. send()메소드
+			request.send();
+			
+		}
+		//5. xml가져오기
+		function callAjax5() {
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if(request.readyState = 4 && request.status==200){
+					var xml = request.responseXML;
+					console.log(xml);
+					var books = xml.getElementsByTagName("book");
+					console.log(books);
+					var result = document.getElementById("result");
+					for(var i =0; i<books.length;i++){
+						var book = books[i];
+						var name = book.getElementsByTagName("name")[0].textContent;
+						var publisher = book.getElementsByTagName("publisher")[0].textContent;
+						var author = book.getElementsByTagName("author")[0].textContent;
+						var price = book.getElementsByTagName("price")[0].textContent;
+						
+						result.innerHTML +=name+"+/"+publisher+"/"+author+"/"+price+"/" +"<br>"
+					}
+				}
+			}
+			request.open("get","/Dev1/data/data1.xml",false);
+			request.send();
+			
+		}
+		//6. 6번 버튼 클릭 시 data2.xml에 있는 모든 정보를 id result 요소 안에 출력
+		function callAjax6() {
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if(request.readyState = 4 && request.status==200){
+					//1. xml 객체 만들기
+					var xml = request.responseXML;
+					console.log(xml);
+					
+					//2. 이후 태그 이름으로 찾
+					var school = xml.getElementsByTagName("school")[0];
+					var name_0 = school.getElementsByTagName("name")[0].textContent;
+					var students = school.getElementsByTagName("student");
+					
+					
+					console.log(school);
+					console.log(name_0);
+					console.log(students);
+					
+					var result = "";
+					//result = school+name_0+students+"<br>"
+					for(var i=0; i<students.length;i++){
+						var student = students[i];
+						var name = student.getElementsByTagName("name")[0].textContent;
+						var age = student.getElementsByTagName("age")[0].textContent;
+						result += "학생 이름 :"+name +"/나이 :"+age+"<br>";
+					}
+					document.getElementById("result").innerHTML = 
+						 "["+name_0+"]학교의 학생 정보<br>"+result;
+				}
+			}
+			request.open("get","/Dev1/data/data2.xml",false);
+			request.send();
+			
+			
+		}
+</script>
+
+
+</head>
+<body>
+	<h2>ajax 통신테스트 페이지<h2>
+	<button onclick="callAjax1()">callAjax1</button>
+	<button onclick="callAjax2()">callAjax2</button>
+	<button onclick="callAjax3()">callAjax3</button>
+	<button onclick="callAjax4()">callAjax4</button>
+	<button onclick="callAjax5()">callAjax5</button>
+	<button onclick="callAjax6()">callAjax6</button>
+	<button onclick="callAjax7()">callAjax7</button>
+	
+	<div id="result"></div>
+</body>
+</html>
